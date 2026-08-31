@@ -1,6 +1,6 @@
 # myportfolio
 
-A new Flutter project.
+This is my personal portfolio website .
 
 ## Getting Started
 
