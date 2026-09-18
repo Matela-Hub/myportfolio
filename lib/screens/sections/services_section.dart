@@ -20,7 +20,7 @@ class _ServicesSectionState extends State<ServicesSection> {
     final bool isMobile = Responsive.isMobile(context);
     final bool isTablet = Responsive.isTablet(context);
     
-    int crossAxisCount = 3;
+    int crossAxisCount = 4; // Increased to 4 columns to make cards naturally smaller
     if (isMobile) {
       crossAxisCount = 1;
     } else if (isTablet) {
@@ -38,7 +38,7 @@ class _ServicesSectionState extends State<ServicesSection> {
       },
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 20 : 50, 
+          horizontal: isMobile ? 30 : 120, // Increased horizontal padding to squeeze the grid
           vertical: 80
         ),
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -46,13 +46,14 @@ class _ServicesSectionState extends State<ServicesSection> {
           children: [
             const Text(
               'Services',
-              style: TextStyle(fontSize: 18, color: AppColors.accent, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 16, color: AppColors.accent, fontWeight: FontWeight.w600, letterSpacing: 3),
             ).animate(target: _isVisible ? 1 : 0).fadeIn().slideY(begin: 0.2, end: 0),
+            const SizedBox(height: 10),
             Text(
               'What I Do for My Clients',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: isMobile ? 28 : 32, 
+                fontSize: isMobile ? 24 : 32, 
                 fontWeight: FontWeight.bold, 
                 color: Theme.of(context).textTheme.bodyLarge?.color
               ),
@@ -62,9 +63,9 @@ class _ServicesSectionState extends State<ServicesSection> {
               crossAxisCount: crossAxisCount,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 25,
-              crossAxisSpacing: 25,
-              childAspectRatio: isMobile ? 0.8 : 0.9, // Adjusted for longer text
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              childAspectRatio: isMobile ? 1.4 : 1.1, // Adjusted for a sleeker rectangular shape
               children: [
                 _buildAnimatedServiceCard(
                   Icons.smartphone, 
@@ -87,19 +88,19 @@ class _ServicesSectionState extends State<ServicesSection> {
                 _buildAnimatedServiceCard(
                   Icons.bar_chart, 
                   'Business Intelligence', 
-                  'Converting complex datasets into clear, interactive visual stories. I build automated reporting pipelines and intuitive dashboards that streamline business analysis, monitor organizational performance, and simplify executive decision-making.',
+                  'Converting complex datasets into clear, interactive visual stories and dashboards.',
                   3
                 ),
                 _buildAnimatedServiceCard(
                   Icons.terminal, 
                   'Programming', 
-                  'Software Engineering & Logic Design. Implementing robust programming logic using modern languages and clean-code principles.',
+                  'Implementing robust programming logic using modern languages and clean-code principles.',
                   4
                 ),
                 _buildAnimatedServiceCard(
                   Icons.storage, 
                   'Database Development', 
-                  'Engineering secure, scalable, and optimized data architectures. I design and implement relational and non-relational databases that ensure data integrity and high-speed retrieval.',
+                  'Engineering secure, scalable, and optimized data architectures and systems.',
                   5
                 ),
               ],
@@ -113,48 +114,67 @@ class _ServicesSectionState extends State<ServicesSection> {
   Widget _buildAnimatedServiceCard(IconData icon, String title, String description, int index) {
     return HoverableCard(
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: AppColors.accent.withValues(alpha: 0.1)),
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.accent.withValues(alpha: 0.15)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: AppColors.accent.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, size: 30, color: AppColors.accent),
+              child: Icon(icon, size: 24, color: AppColors.accent),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 12),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14, 
+                fontWeight: FontWeight.bold, 
+                color: Theme.of(context).textTheme.bodyLarge?.color
+              ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Flexible(
               child: Text(
                 description,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.4),
+                style: TextStyle(
+                  fontSize: 10.5, 
+                  color: Theme.of(context).textTheme.bodyMedium?.color, 
+                  height: 1.3
+                ),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
       ),
-    ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: (400 + index * 100).ms).slideY(begin: 0.1, end: 0);
+    ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: (index * 80).ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutBack);
   }
 }
