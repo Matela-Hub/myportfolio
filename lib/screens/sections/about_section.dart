@@ -48,7 +48,7 @@ class _AboutSectionState extends State<AboutSection> {
                 borderRadius: BorderRadius.circular(20),
                 child: Image.asset(
                   'assets/images/Me.jpeg',
-                  height: isMobile ? 300 : null,
+                  height: isMobile ? 400 : 500,
                   width: isMobile ? double.infinity : null,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 200, color: AppColors.accent),

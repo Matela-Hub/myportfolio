@@ -59,11 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Moshate', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.accent)),
         actions: [
           if (!isMobile) ...[
-            _navButton('Home', () => _scrollToSection(_heroKey)),
-            _navButton('About', () => _scrollToSection(_aboutKey)),
-            _navButton('Services', () => _scrollToSection(_servicesKey)),
-            _navButton('Portfolio', () => _scrollToSection(_portfolioKey)),
-            _navButton('Contact', () => _scrollToSection(_contactKey)),
+            _NavButton(text: 'Home', onPressed: () => _scrollToSection(_heroKey)),
+            _NavButton(text: 'About', onPressed: () => _scrollToSection(_aboutKey)),
+            _NavButton(text: 'Services', onPressed: () => _scrollToSection(_servicesKey)),
+            _NavButton(text: 'Portfolio', onPressed: () => _scrollToSection(_portfolioKey)),
+            _NavButton(text: 'Contact', onPressed: () => _scrollToSection(_contactKey)),
           ],
           IconButton(
             icon: Icon(
@@ -128,26 +128,46 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          _drawerTile('Home', Icons.home, () {
-            Navigator.pop(context);
-            _scrollToSection(_heroKey);
-          }),
-          _drawerTile('About', Icons.person, () {
-            Navigator.pop(context);
-            _scrollToSection(_aboutKey);
-          }),
-          _drawerTile('Services', Icons.settings, () {
-            Navigator.pop(context);
-            _scrollToSection(_servicesKey);
-          }),
-          _drawerTile('Portfolio', Icons.work, () {
-            Navigator.pop(context);
-            _scrollToSection(_portfolioKey);
-          }),
-          _drawerTile('Contact', Icons.contact_mail, () {
-            Navigator.pop(context);
-            _scrollToSection(_contactKey);
-          }),
+          _DrawerTile(
+            title: 'Home', 
+            icon: Icons.home, 
+            onTap: () {
+              Navigator.pop(context);
+              _scrollToSection(_heroKey);
+            }
+          ),
+          _DrawerTile(
+            title: 'About', 
+            icon: Icons.person, 
+            onTap: () {
+              Navigator.pop(context);
+              _scrollToSection(_aboutKey);
+            }
+          ),
+          _DrawerTile(
+            title: 'Services', 
+            icon: Icons.settings, 
+            onTap: () {
+              Navigator.pop(context);
+              _scrollToSection(_servicesKey);
+            }
+          ),
+          _DrawerTile(
+            title: 'Portfolio', 
+            icon: Icons.work, 
+            onTap: () {
+              Navigator.pop(context);
+              _scrollToSection(_portfolioKey);
+            }
+          ),
+          _DrawerTile(
+            title: 'Contact', 
+            icon: Icons.contact_mail, 
+            onTap: () {
+              Navigator.pop(context);
+              _scrollToSection(_contactKey);
+            }
+          ),
           const Divider(),
           ListTile(
             leading: Icon(
@@ -168,26 +188,121 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
 
-  Widget _drawerTile(String title, IconData icon, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: AppColors.accent),
-      title: Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
-      onTap: onTap,
+class _DrawerTile extends StatefulWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _DrawerTile({
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  State<_DrawerTile> createState() => _DrawerTileState();
+}
+
+class _DrawerTileState extends State<_DrawerTile> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _isHovered ? AppColors.accent : Colors.transparent,
+              width: 1.5,
+            ),
+            boxShadow: _isHovered ? [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.2),
+                blurRadius: 10,
+                spreadRadius: 1,
+              )
+            ] : [],
+            color: _isHovered 
+                ? AppColors.accent.withValues(alpha: 0.05) 
+                : Colors.transparent,
+          ),
+          child: ListTile(
+            leading: Icon(
+              widget.icon, 
+              color: _isHovered ? AppColors.accent : AppColors.accent.withValues(alpha: 0.7),
+              size: 22,
+            ),
+            title: Text(
+              widget.title, 
+              style: TextStyle(
+                color: _isHovered ? AppColors.accent : Theme.of(context).textTheme.bodyLarge?.color,
+                fontWeight: _isHovered ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            onTap: widget.onTap,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+      ),
     );
   }
+}
 
-  Widget _navButton(String text, VoidCallback onPressed) {
+class _NavButton extends StatefulWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  const _NavButton({required this.text, required this.onPressed});
+
+  @override
+  State<_NavButton> createState() => _NavButtonState();
+}
+
+class _NavButtonState extends State<_NavButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: _isHovered ? AppColors.accent : Colors.transparent,
+              width: 1,
+            ),
+            boxShadow: _isHovered ? [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.2),
+                blurRadius: 8,
+                spreadRadius: 0,
+              )
+            ] : [],
+          ),
+          child: TextButton(
+            onPressed: widget.onPressed,
+            style: TextButton.styleFrom(
+              foregroundColor: _isHovered ? AppColors.accent : Theme.of(context).textTheme.bodyLarge?.color,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            child: Text(
+              widget.text,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            ),
+          ),
         ),
       ),
     );

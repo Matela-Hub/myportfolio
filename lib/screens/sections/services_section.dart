@@ -67,41 +67,47 @@ class _ServicesSectionState extends State<ServicesSection> {
               crossAxisSpacing: 20,
               childAspectRatio: isMobile ? 1.4 : 1.1, // Adjusted for a sleeker rectangular shape
               children: [
-                _buildAnimatedServiceCard(
-                  Icons.smartphone, 
-                  'Cross-Platform Development', 
-                  'Creating versatile mobile and web applications that run flawlessly on iOS, Android, and desktop using a unified codebase.',
-                  0
+                _ServiceCard(
+                  icon: Icons.smartphone, 
+                  title: 'Cross-Platform Development', 
+                  description: 'Creating versatile mobile and web applications that run flawlessly on iOS, Android, and desktop using a unified codebase.',
+                  index: 0,
+                  isVisible: _isVisible,
                 ),
-                _buildAnimatedServiceCard(
-                  Icons.apps, 
-                  'Application Development', 
-                  'Developing high-performance frontend interfaces paired with secure, efficient backend systems.',
-                  1
+                _ServiceCard(
+                  icon: Icons.apps, 
+                  title: 'Application Development', 
+                  description: 'Developing high-performance frontend interfaces paired with secure, efficient backend systems.',
+                  index: 1,
+                  isVisible: _isVisible,
                 ),
-                _buildAnimatedServiceCard(
-                  Icons.code, 
-                  'Web-App Development', 
-                  'Engineering powerful, browser-based software that automates tasks and solves complex business challenges.',
-                  2
+                _ServiceCard(
+                  icon: Icons.code, 
+                  title: 'Web-App Development', 
+                  description: 'Engineering powerful, browser-based software that automates tasks and solves complex business challenges.',
+                  index: 2,
+                  isVisible: _isVisible,
                 ),
-                _buildAnimatedServiceCard(
-                  Icons.bar_chart, 
-                  'Business Intelligence', 
-                  'Converting complex datasets into clear, interactive visual stories and dashboards.',
-                  3
+                _ServiceCard(
+                  icon: Icons.bar_chart, 
+                  title: 'Business Intelligence', 
+                  description: 'Converting complex datasets into clear, interactive visual stories and dashboards.',
+                  index: 3,
+                  isVisible: _isVisible,
                 ),
-                _buildAnimatedServiceCard(
-                  Icons.terminal, 
-                  'Programming', 
-                  'Implementing robust programming logic using modern languages and clean-code principles.',
-                  4
+                _ServiceCard(
+                  icon: Icons.terminal, 
+                  title: 'Programming', 
+                  description: 'Implementing robust programming logic using modern languages and clean-code principles.',
+                  index: 4,
+                  isVisible: _isVisible,
                 ),
-                _buildAnimatedServiceCard(
-                  Icons.storage, 
-                  'Database Development', 
-                  'Engineering secure, scalable, and optimized data architectures and systems.',
-                  5
+                _ServiceCard(
+                  icon: Icons.storage, 
+                  title: 'Database Development', 
+                  description: 'Engineering secure, scalable, and optimized data architectures and systems.',
+                  index: 5,
+                  isVisible: _isVisible,
                 ),
               ],
             ),
@@ -110,45 +116,90 @@ class _ServicesSectionState extends State<ServicesSection> {
       ),
     );
   }
+}
 
-  Widget _buildAnimatedServiceCard(IconData icon, String title, String description, int index) {
-    return HoverableCard(
-      child: Container(
+class _ServiceCard extends StatefulWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final int index;
+  final bool isVisible;
+
+  const _ServiceCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.index,
+    required this.isVisible,
+  });
+
+  @override
+  State<_ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<_ServiceCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+              _isHovered 
+                  ? Theme.of(context).colorScheme.surface 
+                  : Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.accent.withValues(alpha: 0.15)),
+          border: Border.all(
+            color: _isHovered 
+                ? AppColors.accent 
+                : AppColors.accent.withValues(alpha: 0.15),
+            width: _isHovered ? 2 : 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+              color: _isHovered 
+                  ? AppColors.accent.withValues(alpha: 0.3) 
+                  : Colors.black.withValues(alpha: 0.15),
+              blurRadius: _isHovered ? 20 : 15,
+              offset: _isHovered ? const Offset(0, 0) : const Offset(0, 8),
+              spreadRadius: _isHovered ? 2 : 0,
             ),
           ],
         ),
+        transform: _isHovered ? (Matrix4.identity()..scale(1.05)) : Matrix4.identity(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.1),
+                color: _isHovered 
+                    ? AppColors.accent.withValues(alpha: 0.2) 
+                    : AppColors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, size: 24, color: AppColors.accent),
+              child: Icon(
+                widget.icon, 
+                size: 24, 
+                color: AppColors.accent
+              ),
             ),
             const SizedBox(height: 12),
             Text(
-              title,
+              widget.title,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -161,7 +212,7 @@ class _ServicesSectionState extends State<ServicesSection> {
             const SizedBox(height: 8),
             Flexible(
               child: Text(
-                description,
+                widget.description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 10.5, 
@@ -175,6 +226,8 @@ class _ServicesSectionState extends State<ServicesSection> {
           ],
         ),
       ),
-    ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: (index * 80).ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutBack);
+    ).animate(target: widget.isVisible ? 1 : 0)
+     .fadeIn(delay: (widget.index * 80).ms)
+     .scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutBack);
   }
 }
