@@ -67,29 +67,47 @@ class _SkillsEducationSectionState extends State<SkillsEducationSection> {
             Flex(
               direction: isMobile ? Axis.vertical : Axis.horizontal,
               children: [
-                Expanded(
-                  flex: isMobile ? 0 : 1,
-                  child: _buildEducationCard(
-                    context,
-                    'Limkokwing University',
-                    'Diploma in Business Information Technology',
-                    '2023 - ',
-                    'Incomplete',
-                    0,
+                if (isMobile)
+                  _EducationCard(
+                    school: 'Limkokwing University',
+                    degree: 'Diploma in Business Information Technology',
+                    years: '2023 - ',
+                    status: 'Incomplete',
+                    index: 0,
+                    isVisible: _isVisible,
+                  )
+                else
+                  Expanded(
+                    child: _EducationCard(
+                      school: 'Limkokwing University',
+                      degree: 'Diploma in Business Information Technology',
+                      years: '2023 - ',
+                      status: 'Incomplete',
+                      index: 0,
+                      isVisible: _isVisible,
+                    ),
                   ),
-                ),
                 if (isMobile) const SizedBox(height: 20) else const SizedBox(width: 20),
-                Expanded(
-                  flex: isMobile ? 0 : 1,
-                  child: _buildEducationCard(
-                    context,
-                    'Limkokwing University',
-                    'Certification in Business Information Technology',
-                    '2021 - 2022',
-                    'Completed',
-                    1,
+                if (isMobile)
+                  _EducationCard(
+                    school: 'Limkokwing University',
+                    degree: 'Certification in Business Information Technology',
+                    years: '2021 - 2022',
+                    status: 'Completed',
+                    index: 1,
+                    isVisible: _isVisible,
+                  )
+                else
+                  Expanded(
+                    child: _EducationCard(
+                      school: 'Limkokwing University',
+                      degree: 'Certification in Business Information Technology',
+                      years: '2021 - 2022',
+                      status: 'Completed',
+                      index: 1,
+                      isVisible: _isVisible,
+                    ),
                   ),
-                ),
               ],
             ),
           ],
@@ -156,86 +174,132 @@ class _SkillsEducationSectionState extends State<SkillsEducationSection> {
       ),
     ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: (index * 100).ms).scale(begin: const Offset(0.8, 0.8));
   }
+}
 
-  Widget _buildEducationCard(BuildContext context, String school, String degree, String years, String status, int index) {
-    return Container(
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+class _EducationCard extends StatefulWidget {
+  final String school;
+  final String degree;
+  final String years;
+  final String status;
+  final int index;
+  final bool isVisible;
+
+  const _EducationCard({
+    required this.school,
+    required this.degree,
+    required this.years,
+    required this.status,
+    required this.index,
+    required this.isVisible,
+  });
+
+  @override
+  State<_EducationCard> createState() => _EducationCardState();
+}
+
+class _EducationCardState extends State<_EducationCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(25),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _isHovered 
+                ? AppColors.accent 
+                : AppColors.accent.withValues(alpha: 0.3),
+            width: _isHovered ? 2 : 1,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  status == 'Incomplete' ? Icons.menu_book : Icons.school, 
-                  color: AppColors.accent
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Text(
-                  school, 
-                  style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.bold, 
-                    color: Theme.of(context).textTheme.bodyLarge?.color
+          boxShadow: [
+            BoxShadow(
+              color: _isHovered 
+                  ? AppColors.accent.withValues(alpha: 0.25) 
+                  : Colors.black.withValues(alpha: 0.1),
+              blurRadius: _isHovered ? 20 : 10,
+              offset: _isHovered ? const Offset(0, 8) : const Offset(0, 5),
+              spreadRadius: _isHovered ? 1 : 0,
+            ),
+          ],
+        ),
+        transform: _isHovered ? Matrix4.diagonal3Values(1.02, 1.02, 1.0) : Matrix4.identity(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: _isHovered
+                        ? AppColors.accent.withValues(alpha: 0.2)
+                        : AppColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  overflow: TextOverflow.ellipsis,
+                  child: Icon(
+                    widget.status == 'Incomplete' ? Icons.menu_book : Icons.school, 
+                    color: AppColors.accent,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Text(
-            degree, 
-            style: TextStyle(
-              fontSize: 16, 
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-              height: 1.4
-            )
-          ),
-          const SizedBox(height: 10),
-          Text(years, style: const TextStyle(color: Colors.grey, fontSize: 14)),
-          const SizedBox(height: 20),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-              decoration: BoxDecoration(
-                color: status == 'Completed' 
-                  ? Colors.green.withValues(alpha: 0.8) 
-                  : Colors.orange.withValues(alpha: 0.8),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                status, 
-                style: const TextStyle(
-                  fontSize: 12, 
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-                )
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Text(
+                    widget.school, 
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold, 
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Text(
+              widget.degree, 
+              style: TextStyle(
+                fontSize: 16, 
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+                height: 1.4,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            Text(widget.years, style: const TextStyle(color: Colors.grey, fontSize: 14)),
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                decoration: BoxDecoration(
+                  color: widget.status == 'Completed' 
+                    ? Colors.green.withValues(alpha: 0.8) 
+                    : Colors.orange.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  widget.status, 
+                  style: const TextStyle(
+                    fontSize: 12, 
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: (400 + index * 200).ms).slideY(begin: 0.2, end: 0);
+    ).animate(target: widget.isVisible ? 1 : 0)
+     .fadeIn(delay: (400 + widget.index * 200).ms)
+     .slideY(begin: 0.2, end: 0);
   }
 }
